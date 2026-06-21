@@ -17,18 +17,17 @@ func main() {
 		os.Exit(1)
 	}
 
-	fmt.Println("binary:", client.BinaryPath)
+	fmt.Println("binary: fplll (via $PATH)")
 
 	m := gofplll.Matrix{
 		{big.NewInt(10), big.NewInt(11)},
 		{big.NewInt(11), big.NewInt(12)},
 	}
 
-	ctx := context.Background()
-	result, err := client.Reduce(ctx, m, gofplll.ReduceOptions{
-		Algorithm: gofplll.AlgLLL,
-		Timeout:   5 * time.Second,
-	})
+	result, err := client.Reduce(context.Background(), m,
+		gofplll.WithAlgorithm(gofplll.AlgLLL),
+		gofplll.WithTimeout(5*time.Second),
+	)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "reduce error: %v\n", err)
 		if result != nil {

@@ -23,12 +23,11 @@ func main() {
 		{big.NewInt(1), big.NewInt(3), big.NewInt(5)},
 	}
 
-	ctx := context.Background()
-	result, err := client.Reduce(ctx, m, gofplll.ReduceOptions{
-		Algorithm: gofplll.AlgLLL,
-		Delta:     "0.99",
-		Timeout:   10 * time.Second,
-	})
+	result, err := client.Reduce(context.Background(), m,
+		gofplll.WithAlgorithm(gofplll.AlgLLL),
+		gofplll.WithDelta("0.99"),
+		gofplll.WithTimeout(10*time.Second),
+	)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "error: %v\n", err)
 		os.Exit(1)
