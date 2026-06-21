@@ -58,10 +58,10 @@ func main() {
 		{big.NewInt(11), big.NewInt(12)},
 	}
 
-	result, _ := client.Reduce(context.Background(), m, gofplll.ReduceOptions{
-		Algorithm: gofplll.AlgLLL,
-		Timeout:   5 * time.Second,
-	})
+	result, _ := client.Reduce(context.Background(), m,
+		gofplll.WithAlgorithm(gofplll.AlgLLL),
+		gofplll.WithTimeout(5*time.Second),
+	)
 
 	fmt.Println(result.Matrix)
 }
@@ -70,57 +70,58 @@ func main() {
 ## Basic LLL Example
 
 ```go
-client, err := gofplll.NewDefault()
-if err != nil {
-    log.Fatal(err)
-}
+client, _ := gofplll.NewDefault()
 
 m := gofplll.Matrix{
-    {big.NewInt(1), big.NewInt(1), big.NewInt(1)},
-    {big.NewInt(1), big.NewInt(2), big.NewInt(3)},
-    {big.NewInt(1), big.NewInt(3), big.NewInt(5)},
+	{big.NewInt(1), big.NewInt(1), big.NewInt(1)},
+	{big.NewInt(1), big.NewInt(2), big.NewInt(3)},
+	{big.NewInt(1), big.NewInt(3), big.NewInt(5)},
 }
 
-result, err := client.Reduce(context.Background(), m, gofplll.ReduceOptions{
-    Algorithm: gofplll.AlgLLL,
-    Delta:     "0.99",
-})
+result, err := client.Reduce(context.Background(), m,
+	gofplll.WithAlgorithm(gofplll.AlgLLL),
+	gofplll.WithDelta("0.99"),
+	gofplll.WithTimeout(10*time.Second),
+)
 ```
 
 ## Basic BKZ Example
 
 ```go
-result, err := client.Reduce(context.Background(), m, gofplll.ReduceOptions{
-    Algorithm: gofplll.AlgBKZ,
-    BlockSize: 2,
-    MaxLoops:  10,
-})
+result, err := client.Reduce(context.Background(), m,
+	gofplll.WithAlgorithm(gofplll.AlgBKZ),
+	gofplll.WithBlockSize(2),
+	gofplll.WithTimeout(30*time.Second),
+)
 ```
 
 ## Error Handling
 
 ```go
-result, err := client.Reduce(ctx, m, opts)
+result, err := client.Reduce(ctx, m,
+	gofplll.WithAlgorithm(gofplll.AlgLLL),
+	gofplll.WithTimeout(5*time.Second),
+)
 if err != nil {
-    if errors.Is(err, gofplll.ErrBinaryNotFound) {
-        fmt.Println("fplll is not installed")
-    } else if errors.Is(err, gofplll.ErrInvalidMatrix) {
-        fmt.Println("bad matrix input")
-    } else if errors.Is(err, gofplll.ErrTimeout) {
-        fmt.Println("timed out, partial result:", result.Stdout)
-    }
+	if errors.Is(err, gofplll.ErrBinaryNotFound) {
+		fmt.Println("fplll is not installed")
+	} else if errors.Is(err, gofplll.ErrInvalidMatrix) {
+		fmt.Println("bad matrix input")
+	} else if errors.Is(err, gofplll.ErrTimeout) {
+		fmt.Println("timed out, partial result:", result.Stdout)
+	}
 }
 ```
 
 ## Timeout Example
 
 ```go
-result, err := client.Reduce(ctx, m, gofplll.ReduceOptions{
-    Algorithm: gofplll.AlgLLL,
-    Timeout:   2 * time.Second,
-})
+result, err := client.Reduce(ctx, m,
+	gofplll.WithAlgorithm(gofplll.AlgLLL),
+	gofplll.WithTimeout(2*time.Second),
+)
 if errors.Is(err, gofplll.ErrTimeout) {
-    fmt.Println("partial stdout:", result.Stdout)
+	fmt.Println("partial stdout:", result.Stdout)
 }
 ```
 
